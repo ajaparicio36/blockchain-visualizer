@@ -90,7 +90,7 @@ An interactive 3D blockchain visualizer that brings cryptographic concepts to li
 ### Installation
 
 ```bash
-git clone https://github.com/your-username/blockchain-visualizer.git
+git clone https://github.com/ajaparicio36/blockchain-visualizer.git
 cd blockchain-visualizer
 npm install
 ```
