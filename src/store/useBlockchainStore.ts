@@ -51,7 +51,7 @@ export const useBlockchainStore = create<BlockchainState>((set) => ({
 
   setDifficulty: (d: number) => {
     blockchain.difficulty = d;
-    set({ difficulty: d });
+    set({ difficulty: d, isValid: blockchain.isChainValid() });
   },
 
   validateChain: () => {

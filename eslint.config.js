@@ -17,6 +17,7 @@ export default defineConfig([
       reactHooks.configs.flat.recommended,
       reactRefresh.configs.vite,
     ],
+    ignores: ['**/node_modules/**', '**/dist/**', 'src/components/ui/**'],
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,

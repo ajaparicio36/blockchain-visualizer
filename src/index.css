@@ -1,24 +1,29 @@
 @import 'tailwindcss';
+
+@plugin 'tailwindcss-animate';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
 @config '../tailwind.config.ts';
 
 @theme {
-  /* Primary Dark Palette */
-  --color-void-black: #0a0a0f;
-  --color-deep-space: #13131a;
-  --color-slate-shadow: #1e1e28;
+  /* Primary Dark Palette — rgb() so Tailwind opacity modifiers work */
+  --color-void-black: oklch(0.07 0.01 285);
+  --color-deep-space: oklch(0.13 0.01 285);
+  --color-slate-shadow: oklch(0.18 0.01 285);
 
   /* Neon Accents */
-  --color-cyber-cyan: #00d9ff;
-  --color-electric-blue: #3b82f6;
-  --color-neon-green: #00ff88;
-  --color-plasma-purple: #a855f7;
-  --color-volt-yellow: #fbbf24;
-  --color-alert-red: #ef4444;
+  --color-cyber-cyan: oklch(0.81 0.17 200);
+  --color-electric-blue: oklch(0.62 0.18 260);
+  --color-neon-green: oklch(0.87 0.25 160);
+  --color-plasma-purple: oklch(0.56 0.24 295);
+  --color-volt-yellow: oklch(0.83 0.15 85);
+  --color-alert-red: oklch(0.58 0.22 27);
 
   /* Neutral Grays */
-  --color-ghost-gray: #4b5563;
-  --color-steel-gray: #9ca3af;
-  --color-bright-gray: #e5e7eb;
+  --color-ghost-gray: oklch(0.44 0.02 260);
+  --color-steel-gray: oklch(0.7 0.01 260);
+  --color-bright-gray: oklch(0.92 0.01 260);
 
   /* Font families */
   --font-orbitron: 'Orbitron', 'Rajdhani', 'Exo 2', sans-serif;
@@ -58,6 +63,18 @@
       transform: translateX(6px);
     }
   }
+
+  @keyframes fadeSlideUp {
+    from {
+      opacity: 0;
+      transform: translateX(-50%) translateY(8px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  }
 }
 
 :root {
@@ -73,6 +90,66 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  --radius: 0.625rem;
+
+  /* Remap shadcn semantic tokens → Cyber Grid palette */
+  --background: oklch(0.07 0.01 285);
+  /* Void Black */
+  --foreground: oklch(0.92 0.01 260);
+  /* Bright Gray */
+  --card: oklch(0.13 0.01 285);
+  /* Deep Space */
+  --card-foreground: oklch(0.92 0.01 260);
+  /* Bright Gray */
+  --popover: oklch(0.13 0.01 285);
+  /* Deep Space */
+  --popover-foreground: oklch(0.92 0.01 260);
+  /* Bright Gray */
+  --primary: oklch(0.81 0.17 200);
+  /* Cyber Cyan */
+  --primary-foreground: oklch(0.07 0.01 285);
+  /* Void Black */
+  --secondary: oklch(0.18 0.01 285);
+  /* Slate Shadow */
+  --secondary-foreground: oklch(0.92 0.01 260);
+  /* Bright Gray */
+  --muted: oklch(0.18 0.01 285);
+  /* Slate Shadow */
+  --muted-foreground: oklch(0.44 0.02 260);
+  /* Ghost Gray */
+  --accent: oklch(0.62 0.18 260);
+  /* Electric Blue */
+  --accent-foreground: oklch(0.92 0.01 260);
+  /* Bright Gray */
+  --destructive: oklch(0.58 0.22 27);
+  /* Alert Red */
+  --border: oklch(0.44 0.02 260 / 30%);
+  /* Ghost Gray / 30% */
+  --input: oklch(0.44 0.02 260 / 40%);
+  /* Ghost Gray / 40% */
+  --ring: oklch(0.81 0.17 200);
+  /* Cyber Cyan */
+  --chart-1: oklch(0.81 0.17 200);
+  /* Cyber Cyan */
+  --chart-2: oklch(0.87 0.25 160);
+  /* Neon Green */
+  --chart-3: oklch(0.62 0.18 260);
+  /* Electric Blue */
+  --chart-4: oklch(0.56 0.24 295);
+  /* Plasma Purple */
+  --chart-5: oklch(0.83 0.15 85);
+  /* Volt Yellow */
+  --sidebar: oklch(0.13 0.01 285);
+  /* Deep Space */
+  --sidebar-foreground: oklch(0.92 0.01 260);
+  /* Bright Gray */
+  --sidebar-primary: oklch(0.81 0.17 200);
+  /* Cyber Cyan */
+  --sidebar-primary-foreground: oklch(0.07 0.01 285);
+  --sidebar-accent: oklch(0.18 0.01 285);
+  --sidebar-accent-foreground: oklch(0.92 0.01 260);
+  --sidebar-border: oklch(0.44 0.02 260 / 20%);
+  --sidebar-ring: oklch(0.81 0.17 200);
 }
 
 * {
@@ -169,12 +246,10 @@ pre,
   color: #ffffff;
 }
 
-/* Button reset */
+/* Button reset — keep Tailwind border/bg, only reset font + cursor */
 button {
   font-family: inherit;
   cursor: pointer;
-  border: none;
-  background: none;
   transition: all 0.3s ease;
 }
 
@@ -183,16 +258,65 @@ button:disabled {
   opacity: 0.5;
 }
 
-/* Input reset */
+/* Input reset — keep Tailwind border/bg, only reset font */
 input,
 textarea {
   font-family: inherit;
   color: inherit;
-  border: none;
-  background: none;
 }
 
 input:focus,
 textarea:focus {
   outline: none;
+}
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
 }

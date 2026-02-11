@@ -5,23 +5,23 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Primary Dark Palette
-        'void-black': '#0a0a0f',
-        'deep-space': '#13131a',
-        'slate-shadow': '#1e1e28',
+        // Primary Dark Palette — oklch for opacity modifier support
+        'void-black': 'oklch(0.07 0.01 285)',
+        'deep-space': 'oklch(0.13 0.01 285)',
+        'slate-shadow': 'oklch(0.18 0.01 285)',
 
         // Neon Accents
-        'cyber-cyan': '#00d9ff',
-        'electric-blue': '#3b82f6',
-        'neon-green': '#00ff88',
-        'plasma-purple': '#a855f7',
-        'volt-yellow': '#fbbf24',
-        'alert-red': '#ef4444',
+        'cyber-cyan': 'oklch(0.81 0.17 200)',
+        'electric-blue': 'oklch(0.62 0.18 260)',
+        'neon-green': 'oklch(0.87 0.25 160)',
+        'plasma-purple': 'oklch(0.56 0.24 295)',
+        'volt-yellow': 'oklch(0.83 0.15 85)',
+        'alert-red': 'oklch(0.58 0.22 27)',
 
         // Neutral Grays
-        'ghost-gray': '#4b5563',
-        'steel-gray': '#9ca3af',
-        'bright-gray': '#e5e7eb',
+        'ghost-gray': 'oklch(0.44 0.02 260)',
+        'steel-gray': 'oklch(0.70 0.01 260)',
+        'bright-gray': 'oklch(0.92 0.01 260)',
       },
       fontFamily: {
         orbitron: ['Orbitron', 'Rajdhani', 'Exo 2', 'sans-serif'],

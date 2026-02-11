@@ -11,13 +11,12 @@ export class Blockchain {
 
   constructor(difficulty = 2) {
     this.difficulty = difficulty;
-    this.chain = [];
+    this.chain = [this.createGenesisBlock()];
   }
 
   /** Create the hard-coded genesis block (index 0). */
   private createGenesisBlock(): Block {
     const genesis = new Block(0, 'Genesis Block', '0', Date.now());
-    // Pre-mine at current difficulty so it always has a valid hash
     genesis.nonce = 0;
     genesis.hash = genesis.calculateHash();
     return genesis;
