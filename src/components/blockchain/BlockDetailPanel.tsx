@@ -30,27 +30,27 @@ export default function BlockDetailPanel() {
   const linkValid = selectedIndex === 0 || (prevBlock && block.previousHash === prevBlock.hash);
 
   return (
-    <div className="fixed top-4 right-4 w-96 z-50 animate-in fade-in slide-in-from-right-4">
+    <div className="fixed top-6 right-6 w-[420px] z-50 animate-in fade-in slide-in-from-right-4">
       {/* Panel */}
-      <div className="relative rounded-2xl border border-electric-blue/20 bg-deep-space/90 p-6 backdrop-blur-xl shadow-card">
+      <div className="relative rounded-2xl border-2 border-electric-blue/25 bg-deep-space/92 p-7 backdrop-blur-2xl shadow-card">
         {/* Top accent line */}
-        <div className="absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl bg-gradient-to-r from-transparent via-cyber-cyan to-transparent" />
+        <div className="absolute top-0 left-0 right-0 h-[2px] rounded-t-2xl bg-gradient-to-r from-transparent via-cyber-cyan to-transparent" />
 
         {/* Close button */}
         <button
           onClick={() => selectBlock(null)}
-          className="absolute top-3 right-3 rounded-lg p-1 text-ghost-gray transition-colors hover:bg-slate-shadow hover:text-cyber-cyan"
+          className="absolute top-4 right-4 rounded-lg p-1.5 text-ghost-gray transition-colors hover:bg-slate-shadow hover:text-cyber-cyan"
         >
           <X size={18} />
         </button>
 
         {/* Block title */}
-        <h2 className="mb-4 font-orbitron text-lg font-bold tracking-wider text-white">
+        <h2 className="mb-5 font-orbitron text-xl font-bold tracking-wider text-white">
           {block.index === 0 ? '⛓ Genesis Block' : `Block #${block.index}`}
         </h2>
 
         {/* Fields */}
-        <div className="space-y-3 text-sm">
+        <div className="space-y-4 text-sm">
           {/* Block Number */}
           <Field label="Block Number" value={`#${block.index}`} />
 
@@ -62,16 +62,21 @@ export default function BlockDetailPanel() {
 
           {/* Previous Hash */}
           <div>
-            <span className="text-xs uppercase tracking-widest text-ghost-gray">Previous Hash</span>
-            <div className="mt-0.5 flex items-center gap-2">
+            <span className="mb-1 block text-xs uppercase tracking-widest text-ghost-gray">
+              Previous Hash
+            </span>
+            <div className="flex items-start gap-2.5 rounded-lg border border-ghost-gray/20 bg-slate-shadow/40 px-3 py-2">
               {/* Colour swatch linking to previous block */}
               <span
-                className="inline-block h-3 w-3 rounded-full"
+                className="mt-1 inline-block h-3 w-3 shrink-0 rounded-full"
                 style={{
                   backgroundColor: linkValid ? '#00ff88' : '#ef4444',
+                  boxShadow: linkValid
+                    ? '0 0 6px rgba(0,255,136,0.5)'
+                    : '0 0 6px rgba(239,68,68,0.5)',
                 }}
               />
-              <code className="flex-1 break-all font-mono text-xs text-cyber-cyan">
+              <code className="flex-1 break-all font-mono text-xs leading-relaxed text-cyber-cyan">
                 {block.previousHash}
               </code>
               <CopyButton
@@ -88,13 +93,20 @@ export default function BlockDetailPanel() {
 
           {/* Hash */}
           <div>
-            <span className="text-xs uppercase tracking-widest text-ghost-gray">Hash</span>
-            <div className="mt-0.5 flex items-center gap-2">
+            <span className="mb-1 block text-xs uppercase tracking-widest text-ghost-gray">
+              Hash
+            </span>
+            <div className="flex items-start gap-2.5 rounded-lg border border-ghost-gray/20 bg-slate-shadow/40 px-3 py-2">
               <span
-                className="inline-block h-3 w-3 rounded-full"
-                style={{ backgroundColor: linkValid ? '#00ff88' : '#ef4444' }}
+                className="mt-1 inline-block h-3 w-3 shrink-0 rounded-full"
+                style={{
+                  backgroundColor: linkValid ? '#00ff88' : '#ef4444',
+                  boxShadow: linkValid
+                    ? '0 0 6px rgba(0,255,136,0.5)'
+                    : '0 0 6px rgba(239,68,68,0.5)',
+                }}
               />
-              <code className="flex-1 break-all font-mono text-xs text-cyber-cyan">
+              <code className="flex-1 break-all font-mono text-xs leading-relaxed text-cyber-cyan">
                 {block.hash}
               </code>
               <CopyButton
@@ -107,14 +119,17 @@ export default function BlockDetailPanel() {
           </div>
         </div>
 
+        {/* Divider */}
+        <div className="mt-5 border-t border-ghost-gray/20" />
+
         {/* Validity badge */}
         <div className="mt-4">
           {linkValid ? (
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-neon-green bg-neon-green/15 px-3 py-1 text-xs font-semibold text-neon-green shadow-neon-green">
-              <Check size={14} /> Valid Link
+            <span className="inline-flex items-center gap-2 rounded-full border-2 border-neon-green/50 bg-neon-green/10 px-4 py-1.5 text-xs font-bold tracking-wide text-neon-green shadow-neon-green">
+              <Check size={14} strokeWidth={3} /> Valid Link
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-alert-red bg-alert-red/15 px-3 py-1 text-xs font-semibold text-alert-red shadow-neon-red animate-pulse-slow">
+            <span className="inline-flex items-center gap-2 rounded-full border-2 border-alert-red/50 bg-alert-red/10 px-4 py-1.5 text-xs font-bold tracking-wide text-alert-red shadow-neon-red animate-pulse-slow">
               ⚠ Broken Link
             </span>
           )}
@@ -129,8 +144,8 @@ export default function BlockDetailPanel() {
 function Field({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <span className="text-xs uppercase tracking-widest text-ghost-gray">{label}</span>
-      <p className="mt-0.5 text-bright-gray">{value}</p>
+      <span className="mb-1 block text-xs uppercase tracking-widest text-ghost-gray">{label}</span>
+      <p className="text-bright-gray leading-relaxed">{value}</p>
     </div>
   );
 }

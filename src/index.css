@@ -1,4 +1,64 @@
 @import 'tailwindcss';
+@config '../tailwind.config.ts';
+
+@theme {
+  /* Primary Dark Palette */
+  --color-void-black: #0a0a0f;
+  --color-deep-space: #13131a;
+  --color-slate-shadow: #1e1e28;
+
+  /* Neon Accents */
+  --color-cyber-cyan: #00d9ff;
+  --color-electric-blue: #3b82f6;
+  --color-neon-green: #00ff88;
+  --color-plasma-purple: #a855f7;
+  --color-volt-yellow: #fbbf24;
+  --color-alert-red: #ef4444;
+
+  /* Neutral Grays */
+  --color-ghost-gray: #4b5563;
+  --color-steel-gray: #9ca3af;
+  --color-bright-gray: #e5e7eb;
+
+  /* Font families */
+  --font-orbitron: 'Orbitron', 'Rajdhani', 'Exo 2', sans-serif;
+  --font-inter: 'Inter', 'Roboto', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+
+  /* Box shadows */
+  --shadow-neon-cyan: 0 0 20px rgba(0, 217, 255, 0.4);
+  --shadow-neon-cyan-lg: 0 0 30px rgba(0, 217, 255, 0.7);
+  --shadow-neon-green: 0 0 15px rgba(0, 255, 136, 0.3);
+  --shadow-neon-red: 0 0 15px rgba(239, 68, 68, 0.4);
+  --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.4);
+
+  /* Animations */
+  --animate-pulse-slow: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-shake: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+
+  @keyframes shake {
+    10%,
+    90% {
+      transform: translateX(-2px);
+    }
+
+    20%,
+    80% {
+      transform: translateX(4px);
+    }
+
+    30%,
+    50%,
+    70% {
+      transform: translateX(-6px);
+    }
+
+    40%,
+    60% {
+      transform: translateX(6px);
+    }
+  }
+}
 
 :root {
   font-family: 'Inter', 'Roboto', system-ui, sans-serif;

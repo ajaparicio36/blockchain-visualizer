@@ -11,7 +11,7 @@ export class Blockchain {
 
   constructor(difficulty = 2) {
     this.difficulty = difficulty;
-    this.chain = [this.createGenesisBlock()];
+    this.chain = [];
   }
 
   /** Create the hard-coded genesis block (index 0). */
@@ -23,17 +23,20 @@ export class Blockchain {
     return genesis;
   }
 
-  /** Last block in the chain. */
-  getLatestBlock(): Block {
-    return this.chain[this.chain.length - 1];
+  /** Last block in the chain, or undefined if the chain is empty. */
+  getLatestBlock(): Block | undefined {
+    return this.chain.length > 0 ? this.chain[this.chain.length - 1] : undefined;
   }
 
   /**
    * Create a new block, mine it (async/non-blocking), and append.
+   * If the chain is empty, create a genesis block.
    */
   async addBlock(data: string): Promise<Block> {
     const prev = this.getLatestBlock();
-    const block = new Block(prev.index + 1, data, prev.hash);
+    const index = prev ? prev.index + 1 : 0;
+    const previousHash = prev ? prev.hash : '0';
+    const block = new Block(index, data, previousHash);
     await block.mineBlock(this.difficulty);
     this.chain.push(block);
     return block;
