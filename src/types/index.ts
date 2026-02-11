@@ -34,9 +34,9 @@ export const MIN_DIFFICULTY = 1;
 export const MAX_DIFFICULTY = 4;
 
 /** Block spacing constant for 3D layout. */
-export const BLOCK_SPACING = 4;
+export const BLOCK_SPACING = 4.5;
 
-/** Block geometry dimensions. */
+/** Block geometry dimensions — actual cube proportions. */
 export const BLOCK_WIDTH = 2.4;
-export const BLOCK_HEIGHT = 1.6;
-export const BLOCK_DEPTH = 0.4;
+export const BLOCK_HEIGHT = 2.4;
+export const BLOCK_DEPTH = 2.4;

@@ -37,11 +37,12 @@ export const useBlockchainStore = create<BlockchainState>((set) => ({
 
   editBlockData: (index: number, newData: string) => {
     const block = blockchain.chain[index];
-    if (!block) return;
+    if (!block || index === 0) return; // Cannot edit genesis block
 
-    // Mutate data WITHOUT re-mining — deliberately breaks the chain
+    // Mutate data WITHOUT re-mining — hash stays stale, deliberately breaks the chain
     block.data = newData;
-    block.hash = block.calculateHash();
+    // NOTE: Do NOT recalculate hash. The stored hash is now invalid,
+    // which is exactly how tampering detection works.
 
     set({
       chain: blockchain.toData(),

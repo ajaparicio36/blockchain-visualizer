@@ -1,3 +1,7 @@
+import SHA256 from 'crypto-js/sha256';
+
+import type { BlockData } from '../types';
+
 /**
  * Truncate a hex hash for display.
  * @param hash  Full SHA-256 hex string.
@@ -24,4 +28,21 @@ export function formatTimestamp(ms: number): string {
 export function truncateData(data: string, max = 20): string {
   if (data.length <= max) return data;
   return `${data.slice(0, max)}…`;
+}
+
+/**
+ * Compute the actual SHA-256 hash for a BlockData snapshot.
+ * Used to show the mismatch when a block has been tampered with.
+ */
+export function computeActualHash(block: BlockData): string {
+  return SHA256(
+    `${block.index}${block.previousHash}${block.timestamp}${block.data}${block.nonce}`,
+  ).toString();
+}
+
+/**
+ * Check if a block's stored hash matches its actual computed hash.
+ */
+export function isBlockHashValid(block: BlockData): boolean {
+  return block.hash === computeActualHash(block);
 }

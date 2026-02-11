@@ -44,13 +44,19 @@ export default function Scene() {
       {/* Blockchain visualisation */}
       <ChainGroup />
 
-      {/* Orbit controls — damping for smooth feel */}
+      {/* Orbit controls — damping for smooth feel, generous freedom */}
       <OrbitControls
+        makeDefault
         enableDamping
         dampingFactor={0.08}
-        minDistance={3}
-        maxDistance={50}
-        maxPolarAngle={Math.PI / 2 + 0.2}
+        enablePan
+        panSpeed={0.8}
+        minDistance={2}
+        maxDistance={80}
+        minPolarAngle={0.2}
+        maxPolarAngle={Math.PI / 2 + 0.35}
+        maxAzimuthAngle={Infinity}
+        minAzimuthAngle={-Infinity}
       />
 
       {/* Post-processing: subtle bloom + vignette */}
