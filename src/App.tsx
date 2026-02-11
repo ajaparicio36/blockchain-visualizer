@@ -1,35 +1,31 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import Scene from './components/three/Scene';
+import BlockDetailPanel from './components/blockchain/BlockDetailPanel';
+import AddBlockForm from './components/blockchain/AddBlockForm';
+import ValidationBadge from './components/blockchain/ValidationBadge';
+import DifficultySelector from './components/blockchain/DifficultySelector';
 
+/**
+ * App — root layout shell.
+ *
+ * Full-viewport 3D canvas with floating HUD overlays:
+ *   - ValidationBadge    (top-left)
+ *   - DifficultySelector (top-left, below badge)
+ *   - BlockDetailPanel   (top-right, when a block is selected)
+ *   - AddBlockForm       (bottom-center)
+ */
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="relative h-screen w-screen overflow-hidden bg-void-black">
+      {/* 3D Canvas — fills entire viewport */}
+      <Scene />
+
+      {/* HUD Overlays */}
+      <ValidationBadge />
+      <DifficultySelector />
+      <BlockDetailPanel />
+      <AddBlockForm />
+    </div>
+  );
 }
 
-export default App
+export default App;
