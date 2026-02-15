@@ -58,16 +58,38 @@ export default function ChainLinks3D({ chain }: ChainLinks3DProps) {
 /** Individual link with pulsing effect when invalid. */
 function ChainLink({ points, valid }: { points: [THREE.Vector3, THREE.Vector3]; valid: boolean }) {
   const coneRef = useRef<THREE.Mesh>(null);
+  const glowLineRef = useRef<THREE.Group>(null);
 
-  // Pulse invalid links
+  // Pulse invalid links — both cone and glow line
   useFrame((state) => {
-    if (!coneRef.current || valid) return;
-    const mat = coneRef.current.material as THREE.MeshBasicMaterial;
-    mat.opacity = 0.6 + Math.sin(state.clock.elapsedTime * 4) * 0.35;
+    if (valid) return;
+
+    const pulse = Math.sin(state.clock.elapsedTime * 4);
+
+    if (coneRef.current) {
+      const mat = coneRef.current.material as THREE.MeshBasicMaterial;
+      mat.opacity = 0.6 + pulse * 0.35;
+      // Scale the cone to "throb"
+      const s = 1 + pulse * 0.3;
+      coneRef.current.scale.set(s, s, s);
+    }
+
+    // Pulse the outer glow line opacity
+    if (glowLineRef.current) {
+      glowLineRef.current.traverse((child) => {
+        if ((child as THREE.Line).material) {
+          const mat = (child as THREE.Line).material as THREE.LineBasicMaterial;
+          if ('opacity' in mat) {
+            mat.opacity = 0.3 + pulse * 0.25;
+          }
+        }
+      });
+    }
   });
 
   return (
     <group>
+      {/* Core link line */}
       <Line
         points={points}
         color={valid ? '#00ff88' : '#ef4444'}
@@ -75,6 +97,39 @@ function ChainLink({ points, valid }: { points: [THREE.Vector3, THREE.Vector3]; 
         transparent
         opacity={valid ? 0.85 : 0.95}
       />
+
+      {/* Outer glow line for broken links — wider, softer, pulses */}
+      {!valid && (
+        <group ref={glowLineRef}>
+          <Line points={points} color="#ff2222" lineWidth={8} transparent opacity={0.25} />
+        </group>
+      )}
+
+      {/* "Broken link" X marker at midpoint for invalid links */}
+      {!valid &&
+        (() => {
+          const mid = new THREE.Vector3().lerpVectors(points[0], points[1], 0.5);
+          const size = 0.12;
+          return (
+            <group position={mid}>
+              <Line
+                points={[new THREE.Vector3(-size, -size, 0), new THREE.Vector3(size, size, 0)]}
+                color="#ff4444"
+                lineWidth={2.5}
+                transparent
+                opacity={0.9}
+              />
+              <Line
+                points={[new THREE.Vector3(-size, size, 0), new THREE.Vector3(size, -size, 0)]}
+                color="#ff4444"
+                lineWidth={2.5}
+                transparent
+                opacity={0.9}
+              />
+            </group>
+          );
+        })()}
+
       {/* Small arrow cone at the receiving end */}
       <mesh ref={coneRef} position={points[1]} rotation={[0, 0, -Math.PI / 2]}>
         <coneGeometry args={[0.08, 0.2, 8]} />

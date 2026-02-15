@@ -24,13 +24,19 @@ export default function ChainGroup() {
    * If any upstream block is tampered, downstream blocks are also
    * marked invalid (cascade effect) since previous hashes no longer match.
    */
-  const blockValidity = chain.map((block, i) => {
-    if (i === 0) return true;
+  const blockValidity: boolean[] = [];
+  for (let i = 0; i < chain.length; i++) {
+    if (i === 0) {
+      blockValidity.push(true);
+      continue;
+    }
     const prev = chain[i - 1];
-    const hashValid = isBlockHashValid(block);
-    const linkValid = block.previousHash === prev.hash;
-    return hashValid && linkValid;
-  });
+    const hashValid = isBlockHashValid(chain[i]);
+    const linkValid = chain[i].previousHash === prev.hash;
+    // Cascade: if the previous block is invalid, this one is too
+    const upstreamValid = blockValidity[i - 1];
+    blockValidity.push(hashValid && linkValid && upstreamValid);
+  }
 
   /** Which blocks are directly tampered (their own hash is stale). */
   const blockTampered = chain.map((block) => !isBlockHashValid(block));

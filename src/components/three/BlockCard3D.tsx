@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import type { BlockData } from '../../types';
 import { BLOCK_WIDTH, BLOCK_HEIGHT, BLOCK_DEPTH } from '../../types';
 import { formatHash, truncateData } from '../../utils/formatHash';
+import CrackOverlay3D from './CrackOverlay3D';
 
 interface BlockCard3DProps {
   block: BlockData;
@@ -30,25 +31,25 @@ function getMaterial(block: BlockData, isValid: boolean, isTampered: boolean) {
     };
   }
   if (isTampered) {
-    // Directly tampered block — dark red with strong alert glow
+    // Directly tampered block — intense dark red with strong alert glow
     return {
-      color: '#450a0a',
+      color: '#3b0707',
       emissive: '#ef4444',
-      emissiveIntensity: 0.35,
-      metalness: 0.5,
-      roughness: 0.5,
-      edgeColor: '#ef4444',
+      emissiveIntensity: 0.55,
+      metalness: 0.4,
+      roughness: 0.6,
+      edgeColor: '#ff2222',
     };
   }
   if (!isValid) {
-    // Downstream invalid (cascade) — subtler red tint
+    // Downstream invalid (cascade) — clearly red to show corruption spread
     return {
-      color: '#2a0f0f',
-      emissive: '#ef4444',
-      emissiveIntensity: 0.15,
-      metalness: 0.5,
+      color: '#3a0a0a',
+      emissive: '#ff3333',
+      emissiveIntensity: 0.45,
+      metalness: 0.4,
       roughness: 0.5,
-      edgeColor: '#ef4444',
+      edgeColor: '#ff4444',
     };
   }
   // Normal mined block
@@ -93,20 +94,33 @@ export default function BlockCard3D({
     const next = THREE.MathUtils.lerp(s, scaleTarget, 1 - Math.exp(-10 * delta));
     meshRef.current.scale.setScalar(next);
 
-    // Tamper shake — quick oscillation on X
+    // Tamper shake — violent oscillation on X + subtle Y wobble
     if (isTampered) {
-      shakeRef.current += delta * 20;
-      const shakeMag = Math.sin(shakeRef.current) * 0.03 * Math.exp(-delta * 2);
-      groupRef.current.position.x = position[0] + shakeMag;
+      shakeRef.current += delta * 25;
+      const decay = Math.max(0.3, Math.exp(-shakeRef.current * 0.02));
+      const shakeX = Math.sin(shakeRef.current) * 0.06 * decay;
+      const shakeY = Math.cos(shakeRef.current * 1.3) * 0.02 * decay;
+      groupRef.current.position.x = position[0] + shakeX;
+      groupRef.current.position.y = position[1] + shakeY;
+    } else if (!isValid) {
+      // Downstream invalid blocks get a subtle continuous tremor
+      const tremor = Math.sin(state.clock.elapsedTime * 6 + block.index * 2) * 0.015;
+      groupRef.current.position.x = position[0] + tremor;
+      groupRef.current.position.y = position[1];
     } else {
       groupRef.current.position.x = position[0];
+      groupRef.current.position.y = position[1];
       shakeRef.current = 0;
     }
 
-    // Emissive pulse for tampered / invalid blocks
-    if (matRef.current && (isTampered || !isValid)) {
+    // Emissive pulse — tampered blocks pulse aggressively, downstream invalid pulse slower
+    if (matRef.current && isTampered) {
       matRef.current.emissiveIntensity =
-        mat.emissiveIntensity + Math.sin(state.clock.elapsedTime * 3) * 0.15;
+        mat.emissiveIntensity + Math.sin(state.clock.elapsedTime * 5) * 0.3;
+    } else if (matRef.current && !isValid) {
+      // Cascade glow: downstream blocks pulse in a wave pattern offset by index
+      const wave = Math.sin(state.clock.elapsedTime * 3 - block.index * 0.8);
+      matRef.current.emissiveIntensity = mat.emissiveIntensity + wave * 0.25;
     } else if (matRef.current) {
       matRef.current.emissiveIntensity =
         hovered || isSelected ? mat.emissiveIntensity * 3 : mat.emissiveIntensity;
@@ -119,7 +133,7 @@ export default function BlockCard3D({
   });
 
   const textColor = block.index === 0 ? '#e2d4f5' : '#e5e7eb';
-  const hashColor = isTampered ? '#ef4444' : '#00d9ff';
+  const hashColor = isTampered || !isValid ? '#ef4444' : '#00d9ff';
   const zFace = BLOCK_DEPTH / 2 + 0.01; // slightly in front of the face
 
   return (
@@ -153,13 +167,22 @@ export default function BlockCard3D({
           envMapIntensity={0.7}
         />
 
-        {/* Glowing wireframe edges */}
+        {/* Glowing wireframe edges — stay red for tampered/invalid even on hover */}
         <Edges
           threshold={15}
-          color={hovered || isSelected ? '#ffffff' : mat.edgeColor}
+          color={
+            isTampered || !isValid
+              ? mat.edgeColor
+              : hovered || isSelected
+                ? '#ffffff'
+                : mat.edgeColor
+          }
           linewidth={hovered || isSelected ? 2.5 : 1.5}
           scale={1.002}
         />
+
+        {/* Crack overlay INSIDE the mesh so it scales with hover/selection */}
+        {isTampered && <CrackOverlay3D seed={block.index + block.timestamp} animated />}
 
         {/* ── Front-face text ───────────────────────────── */}
 
@@ -296,6 +319,26 @@ export default function BlockCard3D({
         >
           ⚠
         </Text>
+      )}
+
+      {/* Downstream invalid (cascade corruption) — smaller warning + red ring */}
+      {!isTampered && !isValid && block.index !== 0 && (
+        <>
+          <mesh rotation={[Math.PI / 2, 0, 0]}>
+            <torusGeometry args={[1.65, 0.015, 16, 64]} />
+            <meshBasicMaterial color="#ef4444" transparent opacity={0.4} />
+          </mesh>
+          <Text
+            position={[0, BLOCK_HEIGHT / 2 + 0.3, 0]}
+            fontSize={0.2}
+            color="#ef4444"
+            anchorX="center"
+            anchorY="middle"
+            font="/fonts/Orbitron-Bold.ttf"
+          >
+            CORRUPTED
+          </Text>
+        </>
       )}
     </group>
   );
